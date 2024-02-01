@@ -68,7 +68,7 @@ void cBackend_OpenGL::onResize( int _width, int _height )
 sShader cBackend_OpenGL::createShader( const char* _source, eShaderType _type )
 {
 	int  success;
-	char infoLog[ 512 ];
+	char info_log[ 512 ];
 	unsigned int shader;
 
 	switch ( _type )
@@ -93,8 +93,8 @@ sShader cBackend_OpenGL::createShader( const char* _source, eShaderType _type )
 	glGetShaderiv( shader, GL_COMPILE_STATUS, &success );
 	if ( !success )
 	{
-		glGetShaderInfoLog( shader, 512, NULL, infoLog );
-		printf( "ERROR::SHADER::COMPILATION_FAILED\n %s \n", infoLog );
+		glGetShaderInfoLog( shader, 512, NULL, info_log );
+		printf( "ERROR::SHADER::COMPILATION_FAILED\n %s \n", info_log );
 	}
 
 	return { shader, _type };
@@ -151,15 +151,15 @@ void cBackend_OpenGL::attachShader( hShaderProgram& _program, sShader& _shader )
 void cBackend_OpenGL::linkShaderProgram( hShaderProgram& _program )
 {
 	int  success;
-	char infoLog[ 512 ];
+	char info_log[ 512 ];
 
 	glLinkProgram( _program );
 
 	glGetProgramiv( _program, GL_LINK_STATUS, &success );
 	if ( !success )
 	{
-		glGetProgramInfoLog( _program, 512, NULL, infoLog );
-		printf( "ERROR::SHADER::PROGRAM::COMPILATION_FAILED\n %s \n", infoLog );
+		glGetProgramInfoLog( _program, 512, NULL, info_log );
+		printf( "ERROR::SHADER::PROGRAM::COMPILATION_FAILED\n %s \n", info_log );
 	}
 }
 

@@ -12,7 +12,7 @@
 cApplication::cApplication() :
 	m_window{ new cWindow() },
 	m_renderer{ new cRenderer() },
-	m_scene{ new cSceneGame() }
+	m_scene{ nullptr }
 {
 }
 
@@ -26,7 +26,8 @@ void cApplication::onCreate()
 	m_window->create( 1500, 1000, "renderer idfk" );
 	m_renderer->create( *m_window, cRenderer::eBackendType::OpenGL );
 
-	m_scene->create();
+	if( m_scene )
+		m_scene->create();
 }
 
 void cApplication::onResize( int _width, int _height )
@@ -37,7 +38,8 @@ void cApplication::onResize( int _width, int _height )
 
 void cApplication::onRawInput( sInputInfo* _info )
 {
-	m_scene->onRawInput( _info );
+	if ( m_scene )
+		m_scene->onRawInput( _info );
 }
 
 void cApplication::run()
@@ -54,11 +56,13 @@ void cApplication::run()
 		m_window->beginFrame();
 		m_renderer->beginFrame();
 
-		m_scene->update( delta_time );
+		if ( m_scene )
+			m_scene->update( delta_time );
 
 		m_renderer->clear( 0x000000FF );
 
-		m_scene->draw();
+		if ( m_scene )
+			m_scene->draw();
 
 		m_renderer->endFrame();
 		m_window->endFrame();
