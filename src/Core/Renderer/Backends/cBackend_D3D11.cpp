@@ -100,6 +100,92 @@ void cBackend_D3D11::endFrame( void )
 	m_swap_chain->Present( 1, 0 );
 }
 
+sShader cBackend_D3D11::createShader( const char* _source, eShaderType _type )
+{
+	return sShader{};
+}
+
+hShaderProgram cBackend_D3D11::createShaderProgram()
+{
+	return hShaderProgram{};
+}
+
+sBuffer cBackend_D3D11::createBuffer( eBufferType _type )
+{
+	return sBuffer{};
+}
+
+hVertexArray cBackend_D3D11::createVertexArray()
+{
+	return hVertexArray{};
+}
+
+sTexture2D cBackend_D3D11::createTexture()
+{
+	return sTexture2D{};
+}
+
+void cBackend_D3D11::attachShader( hShaderProgram& _program, sShader& _shader )
+{
+}
+
+void cBackend_D3D11::linkShaderProgram( hShaderProgram& _program )
+{
+}
+
+void cBackend_D3D11::generateTexture( sTexture2D _texture, unsigned char* _data )
+{
+}
+
+void cBackend_D3D11::bufferData( sBuffer& _buffer, void* _data, size_t _size )
+{
+}
+
+void cBackend_D3D11::useShaderProgram( hShaderProgram _program )
+{
+}
+
+void cBackend_D3D11::bindVertexLayout( cVertexLayout& _layout )
+{
+}
+
+void cBackend_D3D11::bindVertexArray( hVertexArray _vertex_array )
+{
+}
+
+void cBackend_D3D11::bindTexture2D( hTexture _texture )
+{
+}
+
+void cBackend_D3D11::drawArrays( unsigned int _vertex_count, eDrawMode _mode )
+{
+}
+
+void cBackend_D3D11::drawElements( unsigned int _index_count, eDrawMode _mode )
+{
+}
+
+int cBackend_D3D11::getUniformLocation( hShaderProgram _shader, const char* _uniform )
+{
+	return -1;
+}
+
+void cBackend_D3D11::setUniformMat4f( int _location, float* _matrix_ptr )
+{
+}
+
+void cBackend_D3D11::setUniformFloat( int _location, float _float )
+{
+}
+
+void cBackend_D3D11::setUniformVec4f( int _location, wv::cVector4<float> _vector )
+{
+}
+
+void cBackend_D3D11::setUniformVec4d( int _location, wv::cVector4<double> _vector )
+{
+}
+
 int cBackend_D3D11::createSwapchainResources()
 {
 	Microsoft::WRL::ComPtr<ID3D11Texture2D> backBuffer = nullptr;

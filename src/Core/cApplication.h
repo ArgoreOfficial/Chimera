@@ -46,6 +46,4 @@ private:
 
 	cWindow* m_window;
 	
-	iScene* m_scene;
-
 };

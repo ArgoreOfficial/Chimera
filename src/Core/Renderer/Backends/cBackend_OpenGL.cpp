@@ -73,18 +73,11 @@ sShader cBackend_OpenGL::createShader( const char* _source, eShaderType _type )
 
 	switch ( _type )
 	{
-	case Shader_Vertex:
-		shader = glCreateShader( GL_VERTEX_SHADER );
-		break;
-	case Shader_Fragment:
-		shader = glCreateShader( GL_FRAGMENT_SHADER );
-		break;
-	case Shader_Geometry:
-		shader = glCreateShader( GL_GEOMETRY_SHADER );
-		break;
-	default:
-		return { 0, eShaderType::Shader_None };
-		break;
+	case Shader_Vertex:   shader = glCreateShader( GL_VERTEX_SHADER );   break;
+	case Shader_Fragment: shader = glCreateShader( GL_FRAGMENT_SHADER ); break;
+	case Shader_Geometry: shader = glCreateShader( GL_GEOMETRY_SHADER ); break;
+	
+	default: return { 0, eShaderType::Shader_None }; break;
 	}
 
 	glShaderSource( shader, 1, &_source, NULL );
@@ -111,12 +104,8 @@ int getBufferTarget_OpenGL( eBufferType _type )
 {
 	switch ( _type )
 	{
-	case eBufferType::Buffer_Vertex:
-		return GL_ARRAY_BUFFER;
-		break;
-	case eBufferType::Buffer_Index:
-		return GL_ELEMENT_ARRAY_BUFFER;
-		break;
+	case eBufferType::Buffer_Vertex: return GL_ARRAY_BUFFER; break;
+	case eBufferType::Buffer_Index:  return GL_ELEMENT_ARRAY_BUFFER; break;
 	}
 
 	return GL_NONE;
@@ -142,6 +131,14 @@ hVertexArray cBackend_OpenGL::createVertexArray()
 	return vertex_array;
 }
 
+sTexture2D cBackend_OpenGL::createTexture()
+{
+	sTexture2D texture{ 0,0,0,0 };
+	glGenTextures( 1, &texture.handle );
+
+    return texture;
+}
+
 void cBackend_OpenGL::attachShader( hShaderProgram& _program, sShader& _shader )
 {
 	unsigned int frag = _shader.handle;
@@ -161,6 +158,36 @@ void cBackend_OpenGL::linkShaderProgram( hShaderProgram& _program )
 		glGetProgramInfoLog( _program, 512, NULL, info_log );
 		printf( "ERROR::SHADER::PROGRAM::COMPILATION_FAILED\n %s \n", info_log );
 	}
+}
+
+void cBackend_OpenGL::generateTexture( sTexture2D _texture, unsigned char* _data )
+{
+	if ( !_data )
+	{
+		printf( "No texture data.\n" );
+		return;
+	}
+	
+	glBindTexture( GL_TEXTURE_2D, _texture.handle );
+	
+	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
+	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
+
+	// filtering, TODO: implement as flag
+	// glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
+	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR );
+	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+
+	GLint format;
+	switch ( _texture.num_channels )
+	{
+	case 3: format = GL_RGB; break;
+	case 4: format = GL_RGBA; break;
+	}
+
+	glPixelStorei( GL_UNPACK_ALIGNMENT, 1 );
+	glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, _texture.width, _texture.height, 0, format, GL_UNSIGNED_BYTE, _data );
+	glGenerateMipmap( GL_TEXTURE_2D );
 }
 
 void cBackend_OpenGL::useShaderProgram( hShaderProgram _program )
@@ -216,12 +243,23 @@ void cBackend_OpenGL::bindVertexArray( hVertexArray _vertex_array )
 	glBindVertexArray( _vertex_array );
 }
 
+void cBackend_OpenGL::bindTexture2D( hTexture _texture )
+{
+	glBindTexture( GL_TEXTURE_2D, _texture );
+}
+
 int getPrimitive_OpenGL( eDrawMode _mode )
 {
 	switch ( _mode )
 	{
 	case eDrawMode::DrawMode_Lines:
 		return GL_LINES;
+		break;
+	case eDrawMode::DrawMode_LineLoop:
+		return GL_LINE_LOOP;
+		break;
+	case eDrawMode::DrawMode_LineStrip:
+		return GL_LINE_STRIP;
 		break;
 	case eDrawMode::DrawMode_Points:
 		return GL_POINTS;
