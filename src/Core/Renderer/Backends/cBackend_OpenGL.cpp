@@ -178,7 +178,7 @@ void cBackend_OpenGL::generateTexture( sTexture2D _texture, unsigned char* _data
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR );
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
 
-	GLint format;
+	GLint format = GL_RGBA;
 	switch ( _texture.num_channels )
 	{
 	case 3: format = GL_RGB; break;
