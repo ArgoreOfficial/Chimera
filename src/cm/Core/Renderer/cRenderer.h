@@ -5,8 +5,8 @@ class iShader;
 class cWindow;
 class cPointCloud;
 
-#include <Core/Renderer/Framework/Shader.h>
-#include <Core/Renderer/Framework/Buffer.h>
+#include <cm/Core/Renderer/Framework/Shader.h>
+#include <cm/Core/Renderer/Framework/Buffer.h>
 
 class cRenderer 
 {

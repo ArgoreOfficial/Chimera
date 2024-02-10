@@ -3,8 +3,8 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h> /* temporary */
 
-#include <Core/cWindow.h>
-#include <Core/Renderer/Framework/cVertexLayout.h>
+#include <cm/Core/cWindow.h>
+#include <cm/Core/Renderer/Framework/cVertexLayout.h>
 
 #include <stdio.h>
 
