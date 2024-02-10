@@ -4,7 +4,7 @@
 #include <GLFW/glfw3.h> /* temporary */
 
 #include <cm/Core/cWindow.h>
-#include <cm/Core/Renderer/Framework/cVertexLayout.h>
+#include <cm/Framework/cVertexLayout.h>
 
 #include <stdio.h>
 

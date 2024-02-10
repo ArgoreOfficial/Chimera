@@ -4,10 +4,10 @@ class cWindow;
 class cVertexLayout;
 
 
-#include <cm/Core/Renderer/Framework/Shader.h>
-#include <cm/Core/Renderer/Framework/Buffer.h>
-#include <cm/Core/Renderer/Framework/VertexArray.h>
-#include <cm/Core/Renderer/Framework/Texture.h>
+#include <cm/Framework/Shader.h>
+#include <cm/Framework/Buffer.h>
+#include <cm/Framework/VertexArray.h>
+#include <cm/Framework/Texture.h>
 #include <wv/Math/Vector4.h>
 
 enum eDrawMode

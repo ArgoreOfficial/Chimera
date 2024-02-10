@@ -1,7 +1,7 @@
 #include "cRenderer.h"
 
-#include <cm/Core/Renderer/backends/cBackend_OpenGL.h>
-#include <cm/Core/Renderer/backends/cBackend_D3D11.h>
+#include <cm/backends/cBackend_OpenGL.h>
+#include <cm/backends/cBackend_D3D11.h>
 
 cRenderer::cRenderer( void ):
 	m_backend{ nullptr }
