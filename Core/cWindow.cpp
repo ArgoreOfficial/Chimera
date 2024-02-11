@@ -31,17 +31,17 @@ void processInput( GLFWwindow* window )
 }
 
 
-cWindow::cWindow()
+cm::cWindow::cWindow()
 {
 
 }
 
-cWindow::~cWindow()
+cm::cWindow::~cWindow()
 {
 
 }
 
-int cWindow::create( unsigned int _width, unsigned int _height, const char* _title )
+int cm::cWindow::create( unsigned int _width, unsigned int _height, const char* _title )
 {
 
 	if ( !glfwInit() )
@@ -72,24 +72,24 @@ int cWindow::create( unsigned int _width, unsigned int _height, const char* _tit
 	return 0;
 }
 
-void cWindow::destroy( void )
+void cm::cWindow::destroy( void )
 {
 	glfwTerminate();
 }
 
-void cWindow::beginFrame( void )
+void cm::cWindow::beginFrame( void )
 {
 	processInput( m_window_object );
 	
 }
 
-void cWindow::endFrame( void )
+void cm::cWindow::endFrame( void )
 {
 	glfwSwapBuffers( m_window_object );
 	glfwPollEvents();
 }
 
-float cWindow::getAspect()
+float cm::cWindow::getAspect()
 {
 	if ( m_width == 0 || m_height == 0 )
 		return 1.0f;
@@ -97,18 +97,18 @@ float cWindow::getAspect()
 	return (float)m_width / (float)m_height;
 }
 
-void cWindow::onResize( int _width, int _height )
+void cm::cWindow::onResize( int _width, int _height )
 {
 	m_width = _width;
 	m_height = _height;
 }
 
-double cWindow::getTime()
+double cm::cWindow::getTime()
 {
     return glfwGetTime();
 }
 
-void cWindow::setTitle( const char* _title )
+void cm::cWindow::setTitle( const char* _title )
 {
 	glfwSetWindowTitle( m_window_object, _title );
 }

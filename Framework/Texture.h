@@ -8,12 +8,16 @@
  *
  */
 
-typedef unsigned int hTexture;
-
-struct sTexture2D
+namespace cm
 {
-	int width;
-	int height;
-	int num_channels;
-	hTexture handle;
-};
+	typedef unsigned int hTexture;
+
+	struct sTexture2D
+	{
+		int width;
+		int height;
+		int num_channels;
+		hTexture handle;
+	};
+}
+

@@ -9,17 +9,61 @@
 #include <stdio.h>
 
 
-cBackend_OpenGL::cBackend_OpenGL()
+static GLuint getShaderType_OpenGL( cm::eShaderType _type )
+{
+	using namespace cm;
+
+	switch ( _type )
+	{
+	case Shader_Vertex:   return GL_VERTEX_SHADER;   break;
+	case Shader_Fragment: return GL_FRAGMENT_SHADER; break;
+	case Shader_Geometry: return GL_GEOMETRY_SHADER; break;
+	}
+
+	return GL_NONE;
+}
+
+static GLuint getBufferTarget_OpenGL( cm::eBufferType _type )
+{
+	using namespace cm;
+
+	switch ( _type )
+	{
+	case BufferType_Vertex: return GL_ARRAY_BUFFER;         break;
+	case BufferType_Index:  return GL_ELEMENT_ARRAY_BUFFER; break;
+	}
+
+	return GL_BUFFER;
+}
+
+static GLuint getPrimitive_OpenGL( cm::eDrawMode _mode )
+{
+	using namespace cm;
+
+	switch ( _mode )
+	{
+	case DrawMode_Lines:     return GL_LINES;      break;
+	case DrawMode_LineLoop:  return GL_LINE_LOOP;  break;
+	case DrawMode_LineStrip: return GL_LINE_STRIP; break;
+	case DrawMode_Points:    return GL_POINTS;     break;
+	case DrawMode_Triangle:  return GL_TRIANGLES;  break;
+	}
+
+	return GL_LINES;
+}
+
+
+cm::cBackend_OpenGL::cBackend_OpenGL()
 {
 
 }
 
-cBackend_OpenGL::~cBackend_OpenGL()
+cm::cBackend_OpenGL::~cBackend_OpenGL()
 {
 
 }
 
-void cBackend_OpenGL::create( cWindow& _window )
+void cm::cBackend_OpenGL::create( cWindow& _window )
 {
 	if ( !gladLoadGLLoader( (GLADloadproc)glfwGetProcAddress ) )
 	{
@@ -49,7 +93,7 @@ void cBackend_OpenGL::create( cWindow& _window )
 	glEnable( GL_PROGRAM_POINT_SIZE );
 }
 
-void cBackend_OpenGL::clear( unsigned int _color )
+void cm::cBackend_OpenGL::clear( unsigned int _color )
 {
 	float r = ( _color & 0xFF000000 ) / 256.0f;
 	float g = ( _color & 0x00FF0000 ) / 256.0f;
@@ -60,25 +104,18 @@ void cBackend_OpenGL::clear( unsigned int _color )
 	glClear( GL_COLOR_BUFFER_BIT );
 }
 
-void cBackend_OpenGL::onResize( int _width, int _height )
+void cm::cBackend_OpenGL::onResize( int _width, int _height )
 {
 	glViewport( 0, 0, _width, _height );
 }
 
-sShader cBackend_OpenGL::createShader( const char* _source, eShaderType _type )
+cm::sShader cm::cBackend_OpenGL::createShader( const char* _source, eShaderType _type )
 {
 	int  success;
 	char info_log[ 512 ];
 	unsigned int shader;
 
-	switch ( _type )
-	{
-	case Shader_Vertex:   shader = glCreateShader( GL_VERTEX_SHADER );   break;
-	case Shader_Fragment: shader = glCreateShader( GL_FRAGMENT_SHADER ); break;
-	case Shader_Geometry: shader = glCreateShader( GL_GEOMETRY_SHADER ); break;
-	
-	default: return { 0, eShaderType::Shader_None }; break;
-	}
+	shader = glCreateShader( getShaderType_OpenGL( _type ) );
 
 	glShaderSource( shader, 1, &_source, NULL );
 	glCompileShader( shader );
@@ -93,59 +130,44 @@ sShader cBackend_OpenGL::createShader( const char* _source, eShaderType _type )
 	return { shader, _type };
 }
 
-hShaderProgram cBackend_OpenGL::createShaderProgram()
+cm::hShaderProgram cm::cBackend_OpenGL::createShaderProgram()
 {
 	hShaderProgram program = glCreateProgram();
 
 	return program;
 }
 
-int getBufferTarget_OpenGL( eBufferType _type )
-{
-	switch ( _type )
-	{
-	case eBufferType::Buffer_Vertex: return GL_ARRAY_BUFFER; break;
-	case eBufferType::Buffer_Index:  return GL_ELEMENT_ARRAY_BUFFER; break;
-	}
-
-	return GL_NONE;
-}
-
-sBuffer cBackend_OpenGL::createBuffer( eBufferType _type )
+cm::sBuffer cm::cBackend_OpenGL::createBuffer( eBufferType _type )
 {
 	hBuffer buffer = 0;
 	glGenBuffers( 1, &buffer );
-	int target = getBufferTarget_OpenGL( _type );
-	if( !target )
-		return { 0, eBufferType::Buffer_None };
-
-	glBindBuffer( target, buffer );
+	glBindBuffer( getBufferTarget_OpenGL( _type ), buffer );
 
 	return { buffer, _type };
 }
 
-hVertexArray cBackend_OpenGL::createVertexArray()
+cm::hVertexArray cm::cBackend_OpenGL::createVertexArray()
 {
 	hVertexArray vertex_array;
 	glGenVertexArrays( 1, &vertex_array );
+
 	return vertex_array;
 }
 
-sTexture2D cBackend_OpenGL::createTexture()
+cm::sTexture2D cm::cBackend_OpenGL::createTexture()
 {
 	sTexture2D texture{ 0,0,0,0 };
 	glGenTextures( 1, &texture.handle );
 
-    return texture;
+	return texture;
 }
 
-void cBackend_OpenGL::attachShader( hShaderProgram& _program, sShader& _shader )
+void cm::cBackend_OpenGL::attachShader( hShaderProgram& _program, sShader& _shader )
 {
-	unsigned int frag = _shader.handle;
-	glAttachShader( _program, frag );
+	glAttachShader( _program, _shader.handle );
 }
 
-void cBackend_OpenGL::linkShaderProgram( hShaderProgram& _program )
+void cm::cBackend_OpenGL::linkShaderProgram( hShaderProgram& _program )
 {
 	int  success;
 	char info_log[ 512 ];
@@ -160,16 +182,16 @@ void cBackend_OpenGL::linkShaderProgram( hShaderProgram& _program )
 	}
 }
 
-void cBackend_OpenGL::generateTexture( sTexture2D _texture, unsigned char* _data )
+void cm::cBackend_OpenGL::generateTexture( sTexture2D _texture, unsigned char* _data )
 {
 	if ( !_data )
 	{
 		printf( "No texture data.\n" );
 		return;
 	}
-	
+
 	glBindTexture( GL_TEXTURE_2D, _texture.handle );
-	
+
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
 
@@ -190,22 +212,22 @@ void cBackend_OpenGL::generateTexture( sTexture2D _texture, unsigned char* _data
 	glGenerateMipmap( GL_TEXTURE_2D );
 }
 
-void cBackend_OpenGL::useShaderProgram( hShaderProgram _program )
+void cm::cBackend_OpenGL::useShaderProgram( hShaderProgram _program )
 {
 	glUseProgram( _program );
 }
 
-void cBackend_OpenGL::bufferData( sBuffer& _buffer, void* _data, size_t _size )
+void cm::cBackend_OpenGL::bufferData( sBuffer& _buffer, void* _data, size_t _size )
 {
 	int target = getBufferTarget_OpenGL( _buffer.type );
 	if ( !target )
 		return;
 
 	glBufferData( target, _size, _data, GL_DYNAMIC_DRAW ); /* move usage to buffer object */
-	
+
 }
 
-void cBackend_OpenGL::bindVertexLayout( cVertexLayout& _layout )
+void cm::cBackend_OpenGL::bindVertexLayout( cVertexLayout& _layout )
 {
 	const auto& elements = _layout.getElements();
 	unsigned int offset = 0;
@@ -218,18 +240,10 @@ void cBackend_OpenGL::bindVertexLayout( cVertexLayout& _layout )
 
 		switch ( element.type )
 		{
-		case cVertexLayout::Float:
-			type = GL_FLOAT;
-			break;
-		case cVertexLayout::Uint:
-			type = GL_UNSIGNED_INT;
-			break;
-		case cVertexLayout::Byte:
-			type = GL_UNSIGNED_BYTE;
-			break;
-		case cVertexLayout::Double:
-			type = GL_DOUBLE;
-			break;
+		case cVertexLayout::Float:  type = GL_FLOAT;         break;
+		case cVertexLayout::Uint:   type = GL_UNSIGNED_INT;  break;
+		case cVertexLayout::Byte:   type = GL_UNSIGNED_BYTE; break;
+		case cVertexLayout::Double: type = GL_DOUBLE;        break;
 		}
 
 		glEnableVertexAttribArray( i );
@@ -238,71 +252,47 @@ void cBackend_OpenGL::bindVertexLayout( cVertexLayout& _layout )
 	}
 }
 
-void cBackend_OpenGL::bindVertexArray( hVertexArray _vertex_array )
+void cm::cBackend_OpenGL::bindVertexArray( hVertexArray _vertex_array )
 {
 	glBindVertexArray( _vertex_array );
 }
 
-void cBackend_OpenGL::bindTexture2D( hTexture _texture )
+void cm::cBackend_OpenGL::bindTexture2D( hTexture _texture )
 {
 	glBindTexture( GL_TEXTURE_2D, _texture );
 }
 
-int getPrimitive_OpenGL( eDrawMode _mode )
+void cm::cBackend_OpenGL::drawArrays( unsigned int _vertex_count, eDrawMode _mode )
 {
-	switch ( _mode )
-	{
-	case eDrawMode::DrawMode_Lines:
-		return GL_LINES;
-		break;
-	case eDrawMode::DrawMode_LineLoop:
-		return GL_LINE_LOOP;
-		break;
-	case eDrawMode::DrawMode_LineStrip:
-		return GL_LINE_STRIP;
-		break;
-	case eDrawMode::DrawMode_Points:
-		return GL_POINTS;
-		break;
-	case eDrawMode::DrawMode_Triangle:
-		return GL_TRIANGLES;
-		break;
-	}
-
-	return GL_LINES;
+	glDrawArrays( getPrimitive_OpenGL( _mode ), 0, _vertex_count );
 }
 
-void cBackend_OpenGL::drawArrays( unsigned int _vertex_count, eDrawMode _mode )
-{
-	glDrawArrays( getPrimitive_OpenGL( _mode ), 0, _vertex_count);
-}
-
-void cBackend_OpenGL::drawElements( unsigned int _index_count, eDrawMode _mode )
+void cm::cBackend_OpenGL::drawElements( unsigned int _index_count, eDrawMode _mode )
 {
 	glDrawElements( getPrimitive_OpenGL( _mode ), _index_count, GL_UNSIGNED_INT, 0 );
 }
 
-int cBackend_OpenGL::getUniformLocation( hShaderProgram _shader, const char* _uniform )
+int cm::cBackend_OpenGL::getUniformLocation( hShaderProgram _shader, const char* _uniform )
 {
 	return glGetUniformLocation( _shader, _uniform );;
 }
 
-void cBackend_OpenGL::setUniformMat4f( int _location, float* _matrix_ptr )
+void cm::cBackend_OpenGL::setUniformMat4f( int _location, float* _matrix_ptr )
 {
 	glUniformMatrix4fv( _location, 1, GL_FALSE, _matrix_ptr );
 }
 
-void cBackend_OpenGL::setUniformFloat( int _location, float _float )
+void cm::cBackend_OpenGL::setUniformFloat( int _location, float _float )
 {
 	glUniform1f( _location, _float );
 }
 
-void cBackend_OpenGL::setUniformVec4f( int _location, wv::cVector4<float> _vector )
+void cm::cBackend_OpenGL::setUniformVec4f( int _location, wv::cVector4<float> _vector )
 {
 	glUniform4f( _location, _vector.x, _vector.y, _vector.z, _vector.w );
 }
 
-void cBackend_OpenGL::setUniformVec4d( int _location, wv::cVector4<double> _vector )
+void cm::cBackend_OpenGL::setUniformVec4d( int _location, wv::cVector4<double> _vector )
 {
 	glUniform4d( _location, _vector.x, _vector.y, _vector.z, _vector.w );
 }

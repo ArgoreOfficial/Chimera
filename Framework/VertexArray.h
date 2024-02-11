@@ -7,5 +7,7 @@
  * Type definition for VertexArray handle
  * 
  */
-
-typedef unsigned int hVertexArray;
+namespace cm
+{
+	typedef unsigned int hVertexArray;
+}

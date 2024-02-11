@@ -8,20 +8,22 @@
  * 
  */
 
-typedef unsigned int hShader;
-typedef unsigned int hShaderProgram;
-
-enum eShaderType
+namespace cm
 {
-	Shader_None = 0,
-	Shader_Vertex, 
-	Shader_Fragment,
-	Shader_Geometry,
-	Shader_Compute /* not implemented */
-};
+	typedef unsigned int hShader;
+	typedef unsigned int hShaderProgram;
 
-struct sShader
-{
-	const hShader handle;
-	const eShaderType type;
-};
+	enum eShaderType
+	{
+		Shader_Vertex, 
+		Shader_Fragment,
+		Shader_Geometry,
+		Shader_Compute /* not implemented */
+	};
+
+	struct sShader
+	{
+		const hShader handle;
+		const eShaderType type;
+	};
+}

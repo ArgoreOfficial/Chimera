@@ -7,18 +7,19 @@
  * Type definitions for buffer handles
  * 
  */
-
-typedef unsigned int hBuffer;
-
-enum eBufferType
+namespace cm
 {
-	Buffer_None = 0,
-	Buffer_Vertex,
-	Buffer_Index
-};
+	typedef unsigned int hBuffer;
 
-struct sBuffer
-{
-	hBuffer handle;
-	eBufferType type;
-};
+	enum eBufferType
+	{
+		BufferType_Vertex,
+		BufferType_Index
+	};
+
+	struct sBuffer
+	{
+		hBuffer handle;
+		eBufferType type;
+	};
+}

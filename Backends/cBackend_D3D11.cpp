@@ -10,24 +10,24 @@
 
 #include <cm/Core/cWindow.h>
 
-cBackend_D3D11::cBackend_D3D11():
-	m_window { nullptr }
+cm::cBackend_D3D11::cBackend_D3D11() :
+	m_window{ nullptr }
 {
 
 }
 
-cBackend_D3D11::~cBackend_D3D11()
+cm::cBackend_D3D11::~cBackend_D3D11()
 {
 
 }
 
-void cBackend_D3D11::create( cWindow& _window )
+void cm::cBackend_D3D11::create( cWindow& _window )
 {
 	m_window = &_window;
 
 	if ( FAILED( CreateDXGIFactory1( IID_PPV_ARGS( &m_dxgi_factory ) ) ) )
 	{
-		printf("DXGI: Unable to create DXGIFactory\n");
+		printf( "DXGI: Unable to create DXGIFactory\n" );
 		return;
 	}
 
@@ -35,7 +35,7 @@ void cBackend_D3D11::create( cWindow& _window )
 	/* I hate windows code */
 	if ( FAILED( D3D11CreateDevice( nullptr, D3D_DRIVER_TYPE::D3D_DRIVER_TYPE_HARDWARE, nullptr, 0, &deviceFeatureLevel, 1, D3D11_SDK_VERSION, &m_device, nullptr, &m_device_context ) ) )
 	{
-		printf("D3D11: Failed to create device and device Context\n");
+		printf( "D3D11: Failed to create device and device Context\n" );
 		return;
 	}
 
@@ -68,19 +68,19 @@ void cBackend_D3D11::create( cWindow& _window )
 	printf( "Created D3D11 Renderer.\n" );
 }
 
-void cBackend_D3D11::clear( unsigned int _color )
+void cm::cBackend_D3D11::clear( unsigned int _color )
 {
 	const float r = ( _color & 0xFF000000 ) / 256.0f;
 	const float g = ( _color & 0x00FF0000 ) / 256.0f;
 	const float b = ( _color & 0x0000FF00 ) / 256.0f;
 	const float a = ( _color & 0x000000FF ) / 256.0f;
-	
+
 	const float clear_color[ 4 ] = { r, g, b, a };
 
 	m_device_context->ClearRenderTargetView( m_render_target.Get(), clear_color );
 }
 
-void cBackend_D3D11::beginFrame( void )
+void cm::cBackend_D3D11::beginFrame( void )
 {
 	D3D11_VIEWPORT viewport = {};
 	viewport.TopLeftX = 0;
@@ -91,102 +91,102 @@ void cBackend_D3D11::beginFrame( void )
 	viewport.MaxDepth = 1.0f;
 
 	m_device_context->RSSetViewports( 1, &viewport );
-	
+
 	m_device_context->OMSetRenderTargets( 1, m_render_target.GetAddressOf(), nullptr );
 }
 
-void cBackend_D3D11::endFrame( void )
+void cm::cBackend_D3D11::endFrame( void )
 {
 	m_swap_chain->Present( 1, 0 );
 }
 
-sShader cBackend_D3D11::createShader( const char* _source, eShaderType _type )
+cm::sShader cm::cBackend_D3D11::createShader( const char* _source, eShaderType _type )
 {
 	return sShader{};
 }
 
-hShaderProgram cBackend_D3D11::createShaderProgram()
+cm::hShaderProgram cm::cBackend_D3D11::createShaderProgram()
 {
 	return hShaderProgram{};
 }
 
-sBuffer cBackend_D3D11::createBuffer( eBufferType _type )
+cm::sBuffer cm::cBackend_D3D11::createBuffer( eBufferType _type )
 {
 	return sBuffer{};
 }
 
-hVertexArray cBackend_D3D11::createVertexArray()
+cm::hVertexArray cm::cBackend_D3D11::createVertexArray()
 {
 	return hVertexArray{};
 }
 
-sTexture2D cBackend_D3D11::createTexture()
+cm::sTexture2D cm::cBackend_D3D11::createTexture()
 {
 	return sTexture2D{};
 }
 
-void cBackend_D3D11::attachShader( hShaderProgram& _program, sShader& _shader )
+void cm::cBackend_D3D11::attachShader( hShaderProgram& _program, sShader& _shader )
 {
 }
 
-void cBackend_D3D11::linkShaderProgram( hShaderProgram& _program )
+void cm::cBackend_D3D11::linkShaderProgram( hShaderProgram& _program )
 {
 }
 
-void cBackend_D3D11::generateTexture( sTexture2D _texture, unsigned char* _data )
+void cm::cBackend_D3D11::generateTexture( sTexture2D _texture, unsigned char* _data )
 {
 }
 
-void cBackend_D3D11::bufferData( sBuffer& _buffer, void* _data, size_t _size )
+void cm::cBackend_D3D11::bufferData( sBuffer& _buffer, void* _data, size_t _size )
 {
 }
 
-void cBackend_D3D11::useShaderProgram( hShaderProgram _program )
+void cm::cBackend_D3D11::useShaderProgram( hShaderProgram _program )
 {
 }
 
-void cBackend_D3D11::bindVertexLayout( cVertexLayout& _layout )
+void cm::cBackend_D3D11::bindVertexLayout( cVertexLayout& _layout )
 {
 }
 
-void cBackend_D3D11::bindVertexArray( hVertexArray _vertex_array )
+void cm::cBackend_D3D11::bindVertexArray( hVertexArray _vertex_array )
 {
 }
 
-void cBackend_D3D11::bindTexture2D( hTexture _texture )
+void cm::cBackend_D3D11::bindTexture2D( hTexture _texture )
 {
 }
 
-void cBackend_D3D11::drawArrays( unsigned int _vertex_count, eDrawMode _mode )
+void cm::cBackend_D3D11::drawArrays( unsigned int _vertex_count, eDrawMode _mode )
 {
 }
 
-void cBackend_D3D11::drawElements( unsigned int _index_count, eDrawMode _mode )
+void cm::cBackend_D3D11::drawElements( unsigned int _index_count, eDrawMode _mode )
 {
 }
 
-int cBackend_D3D11::getUniformLocation( hShaderProgram _shader, const char* _uniform )
+int cm::cBackend_D3D11::getUniformLocation( hShaderProgram _shader, const char* _uniform )
 {
 	return -1;
 }
 
-void cBackend_D3D11::setUniformMat4f( int _location, float* _matrix_ptr )
+void cm::cBackend_D3D11::setUniformMat4f( int _location, float* _matrix_ptr )
 {
 }
 
-void cBackend_D3D11::setUniformFloat( int _location, float _float )
+void cm::cBackend_D3D11::setUniformFloat( int _location, float _float )
 {
 }
 
-void cBackend_D3D11::setUniformVec4f( int _location, wv::cVector4<float> _vector )
+void cm::cBackend_D3D11::setUniformVec4f( int _location, wv::cVector4<float> _vector )
 {
 }
 
-void cBackend_D3D11::setUniformVec4d( int _location, wv::cVector4<double> _vector )
+void cm::cBackend_D3D11::setUniformVec4d( int _location, wv::cVector4<double> _vector )
 {
 }
 
-int cBackend_D3D11::createSwapchainResources()
+int cm::cBackend_D3D11::createSwapchainResources()
 {
 	Microsoft::WRL::ComPtr<ID3D11Texture2D> backBuffer = nullptr;
 	if ( FAILED( m_swap_chain->GetBuffer( 0, IID_PPV_ARGS( &backBuffer ) ) ) )
@@ -204,7 +204,7 @@ int cBackend_D3D11::createSwapchainResources()
 	return 1;
 }
 
-void cBackend_D3D11::destroySwapchainResources()
+void cm::cBackend_D3D11::destroySwapchainResources()
 {
 	m_render_target.Reset();
 }
