@@ -32,8 +32,8 @@ namespace cm
 
 		virtual void onResize( int _width, int _height ) { }
 
-		virtual void beginFrame( void ) { }
-		virtual void endFrame  ( void ) { }
+		virtual void begin( void ) { }
+		virtual void end  ( void ) { }
 
 		virtual sShader        createShader( const char* _source, eShaderType _type ) = 0;
 		virtual hShaderProgram createShaderProgram() = 0;

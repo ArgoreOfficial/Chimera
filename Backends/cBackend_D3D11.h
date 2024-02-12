@@ -17,8 +17,8 @@ namespace cm
 		void create( cWindow& _window ) override;
 		void clear( unsigned int _color ) override;
 	
-		void beginFrame( void ) override;
-		void endFrame  ( void ) override;
+		void begin( void ) override;
+		void end  ( void ) override;
 
 		sShader        createShader( const char* _source, eShaderType _type ) override;
 		hShaderProgram createShaderProgram() override;

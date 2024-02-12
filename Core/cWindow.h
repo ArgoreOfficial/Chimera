@@ -15,8 +15,8 @@ namespace cm
 		int  create ( unsigned int _width, unsigned int _height, const char* _title );
 		void destroy( void );
 
-		void beginFrame( void );
-		void endFrame  ( void );
+		void processInput( void );
+		void display  ( void );
 
 		bool shouldClose( void ) const { return glfwWindowShouldClose( m_window_object ); }
 

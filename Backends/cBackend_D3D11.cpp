@@ -80,7 +80,7 @@ void cm::cBackend_D3D11::clear( unsigned int _color )
 	m_device_context->ClearRenderTargetView( m_render_target.Get(), clear_color );
 }
 
-void cm::cBackend_D3D11::beginFrame( void )
+void cm::cBackend_D3D11::begin( void )
 {
 	D3D11_VIEWPORT viewport = {};
 	viewport.TopLeftX = 0;
@@ -95,7 +95,7 @@ void cm::cBackend_D3D11::beginFrame( void )
 	m_device_context->OMSetRenderTargets( 1, m_render_target.GetAddressOf(), nullptr );
 }
 
-void cm::cBackend_D3D11::endFrame( void )
+void cm::cBackend_D3D11::end( void )
 {
 	m_swap_chain->Present( 1, 0 );
 }

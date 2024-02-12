@@ -1,6 +1,6 @@
 #include "cWindow.h"
 
-#include <wv/cApplication.h>
+#include <wv/Core/cApplication.h>
 
 #include <stdio.h>
 
@@ -14,22 +14,15 @@ void keyCallback( GLFWwindow* _window, int _key, int _scancode, int _action, int
 	info->scancode = _scancode;
 	info->mods = _mods;
 
-	cApplication::getInstance().onRawInput( info );
+	wv::cApplication::getInstance().onRawInput( info );
 
 	delete info;
 }
 
 void onResizeCallback( GLFWwindow* window, int _width, int _height )
 {
-	cApplication::getInstance().onResize( _width, _height );
+	wv::cApplication::getInstance().onResize( _width, _height );
 }
-
-void processInput( GLFWwindow* window )
-{
-	if ( glfwGetKey( window, GLFW_KEY_ESCAPE ) == GLFW_PRESS )
-		glfwSetWindowShouldClose( window, true );
-}
-
 
 cm::cWindow::cWindow()
 {
@@ -43,7 +36,6 @@ cm::cWindow::~cWindow()
 
 int cm::cWindow::create( unsigned int _width, unsigned int _height, const char* _title )
 {
-
 	if ( !glfwInit() )
 	{
 		fprintf( stderr, "Failed to init GLFW\n" );
@@ -77,13 +69,13 @@ void cm::cWindow::destroy( void )
 	glfwTerminate();
 }
 
-void cm::cWindow::beginFrame( void )
+void cm::cWindow::processInput( void )
 {
-	processInput( m_window_object );
-	
+	if ( glfwGetKey( m_window_object, GLFW_KEY_ESCAPE ) == GLFW_PRESS )
+		glfwSetWindowShouldClose( m_window_object, true );
 }
 
-void cm::cWindow::endFrame( void )
+void cm::cWindow::display( void )
 {
 	glfwSwapBuffers( m_window_object );
 	glfwPollEvents();
