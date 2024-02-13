@@ -88,9 +88,16 @@ void cm::cBackend_OpenGL::create( cWindow& _window )
 	printf( "   Version (integer) : %d.%d\n", major, minor );
 	printf( "   GLSL Version      : %s\n", glslVersion );
 
+
+	// ATTRIBUTES
+
 	glEnable( GL_BLEND );
 	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
+	
 	glEnable( GL_PROGRAM_POINT_SIZE );
+	
+	glEnable( GL_DEPTH_TEST );
+	glDepthFunc( GL_LESS );
 }
 
 void cm::cBackend_OpenGL::clear( unsigned int _color )
@@ -101,7 +108,7 @@ void cm::cBackend_OpenGL::clear( unsigned int _color )
 	float a = ( _color & 0x000000FF ) / 256.0f;
 
 	glClearColor( r, g, b, a );
-	glClear( GL_COLOR_BUFFER_BIT );
+	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 }
 
 void cm::cBackend_OpenGL::onResize( int _width, int _height )
