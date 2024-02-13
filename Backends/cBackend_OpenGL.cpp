@@ -102,10 +102,10 @@ void cm::cBackend_OpenGL::create( cWindow& _window )
 
 void cm::cBackend_OpenGL::clear( unsigned int _color )
 {
-	float r = ( _color & 0xFF000000 ) / 256.0f;
-	float g = ( _color & 0x00FF0000 ) / 256.0f;
-	float b = ( _color & 0x0000FF00 ) / 256.0f;
-	float a = ( _color & 0x000000FF ) / 256.0f;
+	float r = (float)( ( _color & 0xFF000000 ) >> 24 ) / 256.0f;
+	float g = (float)( ( _color & 0x00FF0000 ) >> 16 ) / 256.0f;
+	float b = (float)( ( _color & 0x0000FF00 ) >> 8  ) / 256.0f;
+	float a = (float)( ( _color & 0x000000FF ) )       / 256.0f;
 
 	glClearColor( r, g, b, a );
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
