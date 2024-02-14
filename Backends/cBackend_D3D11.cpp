@@ -100,14 +100,14 @@ void cm::cBackend_D3D11::end( void )
 	m_swap_chain->Present( 1, 0 );
 }
 
-cm::sShader cm::cBackend_D3D11::createShader( const char* _source, eShaderType _type )
+cm::Shader::sShader cm::cBackend_D3D11::createShader( const char* _source, Shader::eShaderType _type )
 {
-	return sShader{};
+	return Shader::sShader{};
 }
 
-cm::hShaderProgram cm::cBackend_D3D11::createShaderProgram()
+cm::Shader::hShaderProgram cm::cBackend_D3D11::createShaderProgram()
 {
-	return hShaderProgram{};
+	return Shader::hShaderProgram{};
 }
 
 cm::sBuffer cm::cBackend_D3D11::createBuffer( eBufferType _type )
@@ -125,11 +125,11 @@ cm::sTexture2D cm::cBackend_D3D11::createTexture()
 	return sTexture2D{};
 }
 
-void cm::cBackend_D3D11::attachShader( hShaderProgram& _program, sShader& _shader )
+void cm::cBackend_D3D11::attachShader( Shader::hShaderProgram& _program, Shader::sShader& _shader )
 {
 }
 
-void cm::cBackend_D3D11::linkShaderProgram( hShaderProgram& _program )
+void cm::cBackend_D3D11::linkShaderProgram( Shader::hShaderProgram& _program )
 {
 }
 
@@ -141,7 +141,7 @@ void cm::cBackend_D3D11::bufferData( sBuffer& _buffer, void* _data, size_t _size
 {
 }
 
-void cm::cBackend_D3D11::useShaderProgram( hShaderProgram _program )
+void cm::cBackend_D3D11::useShaderProgram( Shader::hShaderProgram _program )
 {
 }
 
@@ -157,6 +157,10 @@ void cm::cBackend_D3D11::bindTexture2D( hTexture _texture )
 {
 }
 
+void cm::cBackend_D3D11::setActiveTextureSlot( int _slot )
+{
+}
+
 void cm::cBackend_D3D11::drawArrays( unsigned int _vertex_count, eDrawMode _mode )
 {
 }
@@ -165,9 +169,14 @@ void cm::cBackend_D3D11::drawElements( unsigned int _index_count, eDrawMode _mod
 {
 }
 
-int cm::cBackend_D3D11::getUniformLocation( hShaderProgram _shader, const char* _uniform )
+int cm::cBackend_D3D11::getUniformLocation( Shader::hShaderProgram _shader, const char* _uniform )
 {
 	return -1;
+}
+
+cm::Shader::sShaderUniform cm::cBackend_D3D11::getUniform( Shader::hShaderProgram _program, unsigned int _slot )
+{
+	return Shader::sShaderUniform{ "", -1, -1 };
 }
 
 void cm::cBackend_D3D11::setUniformMat4f( int _location, float* _matrix_ptr )
@@ -175,6 +184,10 @@ void cm::cBackend_D3D11::setUniformMat4f( int _location, float* _matrix_ptr )
 }
 
 void cm::cBackend_D3D11::setUniformFloat( int _location, float _float )
+{
+}
+
+void cm::cBackend_D3D11::setUniformInt( int _location, int _int )
 {
 }
 

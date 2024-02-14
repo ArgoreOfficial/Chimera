@@ -7,17 +7,17 @@
 #include <cm/Framework/cVertexLayout.h>
 
 #include <stdio.h>
+#include <string>
 
-
-static GLuint getShaderType_OpenGL( cm::eShaderType _type )
+static GLuint getShaderType_OpenGL( cm::Shader::eShaderType _type )
 {
 	using namespace cm;
 
 	switch ( _type )
 	{
-	case Shader_Vertex:   return GL_VERTEX_SHADER;   break;
-	case Shader_Fragment: return GL_FRAGMENT_SHADER; break;
-	case Shader_Geometry: return GL_GEOMETRY_SHADER; break;
+	case Shader::ShaderType_Vertex:   return GL_VERTEX_SHADER;   break;
+	case Shader::ShaderType_Fragment: return GL_FRAGMENT_SHADER; break;
+	case Shader::ShaderType_Geometry: return GL_GEOMETRY_SHADER; break;
 	}
 
 	return GL_NONE;
@@ -116,7 +116,7 @@ void cm::cBackend_OpenGL::onResize( int _width, int _height )
 	glViewport( 0, 0, _width, _height );
 }
 
-cm::sShader cm::cBackend_OpenGL::createShader( const char* _source, eShaderType _type )
+cm::Shader::sShader cm::cBackend_OpenGL::createShader( const char* _source, Shader::eShaderType _type )
 {
 	int  success;
 	char info_log[ 512 ];
@@ -137,9 +137,9 @@ cm::sShader cm::cBackend_OpenGL::createShader( const char* _source, eShaderType 
 	return { shader, _type };
 }
 
-cm::hShaderProgram cm::cBackend_OpenGL::createShaderProgram()
+cm::Shader::hShaderProgram cm::cBackend_OpenGL::createShaderProgram()
 {
-	hShaderProgram program = glCreateProgram();
+	Shader::hShaderProgram program = glCreateProgram();
 
 	return program;
 }
@@ -169,12 +169,12 @@ cm::sTexture2D cm::cBackend_OpenGL::createTexture()
 	return texture;
 }
 
-void cm::cBackend_OpenGL::attachShader( hShaderProgram& _program, sShader& _shader )
+void cm::cBackend_OpenGL::attachShader( Shader::hShaderProgram& _program, Shader::sShader& _shader )
 {
 	glAttachShader( _program, _shader.handle );
 }
 
-void cm::cBackend_OpenGL::linkShaderProgram( hShaderProgram& _program )
+void cm::cBackend_OpenGL::linkShaderProgram( Shader::hShaderProgram& _program )
 {
 	int  success;
 	char info_log[ 512 ];
@@ -219,7 +219,7 @@ void cm::cBackend_OpenGL::generateTexture( sTexture2D _texture, unsigned char* _
 	glGenerateMipmap( GL_TEXTURE_2D );
 }
 
-void cm::cBackend_OpenGL::useShaderProgram( hShaderProgram _program )
+void cm::cBackend_OpenGL::useShaderProgram( Shader::hShaderProgram _program )
 {
 	glUseProgram( _program );
 }
@@ -269,6 +269,11 @@ void cm::cBackend_OpenGL::bindTexture2D( hTexture _texture )
 	glBindTexture( GL_TEXTURE_2D, _texture );
 }
 
+void cm::cBackend_OpenGL::setActiveTextureSlot( int _slot )
+{
+	glActiveTexture( GL_TEXTURE0 + _slot );
+}
+
 void cm::cBackend_OpenGL::drawArrays( unsigned int _vertex_count, eDrawMode _mode )
 {
 	glDrawArrays( getPrimitive_OpenGL( _mode ), 0, _vertex_count );
@@ -279,9 +284,29 @@ void cm::cBackend_OpenGL::drawElements( unsigned int _index_count, eDrawMode _mo
 	glDrawElements( getPrimitive_OpenGL( _mode ), _index_count, GL_UNSIGNED_INT, 0 );
 }
 
-int cm::cBackend_OpenGL::getUniformLocation( hShaderProgram _shader, const char* _uniform )
+int cm::cBackend_OpenGL::getUniformLocation( Shader::hShaderProgram _program, const char* _uniform )
 {
-	return glGetUniformLocation( _shader, _uniform );;
+	return glGetUniformLocation( _program, _uniform );;
+}
+
+cm::Shader::sShaderUniform cm::cBackend_OpenGL::getUniform( Shader::hShaderProgram _program, unsigned int _slot )
+{
+	GLint count;
+
+	glGetProgramiv( _program, GL_ACTIVE_UNIFORMS, &count );
+	
+	if ( _slot >= count )
+		return Shader::sShaderUniform{ "NULL", -1, -1 };
+	
+	const GLsizei buffer_size = 16;
+
+	GLchar name[ buffer_size ];
+	GLsizei name_length;
+	GLenum type;
+	GLint size;
+	glGetActiveUniform( _program, (GLuint)_slot, buffer_size, &name_length, &size, &type, name );
+	
+	return Shader::sShaderUniform{ std::string( name, name_length ), (int)_slot, (int)type };
 }
 
 void cm::cBackend_OpenGL::setUniformMat4f( int _location, float* _matrix_ptr )
@@ -292,6 +317,11 @@ void cm::cBackend_OpenGL::setUniformMat4f( int _location, float* _matrix_ptr )
 void cm::cBackend_OpenGL::setUniformFloat( int _location, float _float )
 {
 	glUniform1f( _location, _float );
+}
+
+void cm::cBackend_OpenGL::setUniformInt( int _location, int _int )
+{
+	glUniform1i( _location, _int );
 }
 
 void cm::cBackend_OpenGL::setUniformVec4f( int _location, wv::cVector4<float> _vector )
