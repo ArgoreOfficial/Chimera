@@ -7,13 +7,36 @@
 void keyCallback( GLFWwindow* _window, int _key, int _scancode, int _action, int _mods )
 {
 	sInputInfo* info = new sInputInfo();
-	info->buttondown = _action == GLFW_PRESS;
-	info->buttonup = _action == GLFW_RELEASE;
-	info->repeat = _action == GLFW_REPEAT;
-	info->key = _key;
-	info->scancode = _scancode;
-	info->mods = _mods;
+	info->type = sInputInfo::InputInfo_Key;
 
+	info->buttondown     = _action == GLFW_PRESS;
+	info->buttonup       = _action == GLFW_RELEASE;
+	info->repeat         = _action == GLFW_REPEAT;
+	info->key            = _key;
+	info->scancode       = _scancode;
+	info->mods           = _mods;
+	info->mouse_position = { 0, 0 };
+
+	wv::cApplication::getInstance().onRawInput( info );
+
+	delete info;
+}
+
+void mouseCallback( GLFWwindow* window, double xpos, double ypos )
+{
+	sInputInfo* info = new sInputInfo();
+	info->type = sInputInfo::InputInfo_Mouse;
+
+	info->buttondown = false;
+	info->buttonup   = false;
+	info->repeat     = false;
+	info->key        = 0;
+	info->scancode   = 0;
+	info->mods       = 0;
+
+	wv::cVector2i new_pos = wv::cVector2i{ (int)xpos, (int)ypos };
+	info->mouse_position = new_pos;
+	
 	wv::cApplication::getInstance().onRawInput( info );
 
 	delete info;
@@ -61,11 +84,17 @@ void cm::cWindow::processInput( void )
 {
 	if ( glfwGetKey( m_window_object, GLFW_KEY_ESCAPE ) == GLFW_PRESS )
 		glfwSetWindowShouldClose( m_window_object, true );
+
+	double xpos, ypos;
+	glfwGetCursorPos( m_window_object, &xpos, &ypos );
+	m_mouse_pos = wv::cVector2i{ (int)xpos, (int)ypos };
 }
 
 void cm::cWindow::display( void )
 {
 	glfwSwapBuffers( m_window_object );
+	
+	
 	glfwPollEvents();
 }
 
@@ -134,6 +163,9 @@ void cm::cWindow::createWindow()
 
 	glfwSetFramebufferSizeCallback( m_window_object, onResizeCallback );
 	glfwSetKeyCallback( m_window_object, keyCallback );
+
+	glfwSetInputMode( m_window_object, GLFW_CURSOR, GLFW_CURSOR_DISABLED ); // center cursor, TODO: allow to be disabled
+	glfwSetCursorPosCallback( m_window_object, mouseCallback );
 }
 
 void cm::cWindow::onResize( int _width, int _height )

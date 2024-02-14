@@ -4,6 +4,8 @@
 #define GLFW_EXPOSE_NATIVE_WIN32
 #include <GLFW/glfw3native.h>
 
+#include <wv/Math/Vector2.h>
+
 namespace cm
 {
 	enum eWindowAttribute
@@ -43,12 +45,17 @@ namespace cm
 		bool         shouldClose( void ) { return glfwWindowShouldClose( m_window_object ); } // TODO: change to state enum
 		float        getAspect  ( void );
 
+		wv::cVector2i getMousePosition( void ) { return m_mouse_pos; }
+		
 		void setTitle( const char* _title ) { m_title = _title; glfwSetWindowTitle( m_window_object, _title ); }
 		void setVSync( bool _state )        { glfwSwapInterval( _state ); }
 
 		void setWindowAttribute( eWindowAttribute _attribute, int _value );
 		void applyWindowAttributes( bool _recreate_window = true );
 	private:
+
+		wv::cVector2i m_mouse_pos;
+		wv::cVector2i m_prev_pos;
 
 		void createWindow();
 
