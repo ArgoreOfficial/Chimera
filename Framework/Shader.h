@@ -17,6 +17,21 @@ namespace cm
 		typedef unsigned int hShader;
 		typedef unsigned int hShaderProgram;
 
+		enum eShaderUniformType
+		{
+			ShaderUniformType_Float,
+			ShaderUniformType_Int,
+			ShaderUniformType_Double,
+			ShaderUniformType_Bool,
+			ShaderUniformType_Vec2,
+			ShaderUniformType_Vec3,
+			ShaderUniformType_Vec4,
+			ShaderUniformType_Sampler1D,
+			ShaderUniformType_Sampler2D,
+			ShaderUniformType_Sampler3D,
+			ShaderUniformType_SamplerCube,
+		};
+
 		enum eShaderType
 		{
 			ShaderType_Vertex, 

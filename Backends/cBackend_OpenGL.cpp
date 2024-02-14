@@ -52,6 +52,26 @@ static GLuint getPrimitive_OpenGL( cm::eDrawMode _mode )
 	return GL_LINES;
 }
 
+static cm::Shader::eShaderUniformType getShaderType( GLenum _type )
+{
+	switch ( _type )
+	{
+	case GL_FLOAT:        return cm::Shader::ShaderUniformType_Float;       break;
+	case GL_INT:          return cm::Shader::ShaderUniformType_Int;         break;
+	case GL_DOUBLE:       return cm::Shader::ShaderUniformType_Double;      break;
+	case GL_BOOL:         return cm::Shader::ShaderUniformType_Bool;        break;
+	case GL_FLOAT_VEC2:   return cm::Shader::ShaderUniformType_Vec2;        break;
+	case GL_FLOAT_VEC3:   return cm::Shader::ShaderUniformType_Vec3;        break;
+	case GL_FLOAT_VEC4:   return cm::Shader::ShaderUniformType_Vec4;        break;
+	case GL_SAMPLER_1D:   return cm::Shader::ShaderUniformType_Sampler1D;   break;
+	case GL_SAMPLER_2D:   return cm::Shader::ShaderUniformType_Sampler2D;   break;
+	case GL_SAMPLER_3D:   return cm::Shader::ShaderUniformType_Sampler3D;   break;
+	case GL_SAMPLER_CUBE: return cm::Shader::ShaderUniformType_SamplerCube; break;
+	}
+	
+	printf( "type %i not implemented lol\n", (int)_type );
+	return cm::Shader::ShaderUniformType_Float;
+}
 
 cm::cBackend_OpenGL::cBackend_OpenGL()
 {
@@ -306,7 +326,7 @@ cm::Shader::sShaderUniform cm::cBackend_OpenGL::getUniform( Shader::hShaderProgr
 	GLint size;
 	glGetActiveUniform( _program, (GLuint)_slot, buffer_size, &name_length, &size, &type, name );
 	
-	return Shader::sShaderUniform{ std::string( name, name_length ), (int)_slot, (int)type };
+	return Shader::sShaderUniform{ std::string( name, name_length ), (int)_slot, getShaderType( type ) };
 }
 
 void cm::cBackend_OpenGL::setUniformMat4f( int _location, float* _matrix_ptr )
